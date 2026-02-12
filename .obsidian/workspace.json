@@ -179,6 +179,7 @@
   },
   "active": "8470988fd662235f",
   "lastOpenFiles": [
+    "README.md",
     "Needs_Action/action_test_file_20260212_215141.md",
     "Inbox/test_file.txt",
     "__pycache__/base_watcher.cpython-314.pyc",
@@ -214,7 +215,6 @@
     "Needs_Action/action_test_file_20260212_123559.md",
     "Needs_Action/action_second_test_file_20260212_123559.md",
     "Needs_Action/action_final_test_file_20260212_123559.md",
-    "bronze_complete.md",
-    "bronze_setup_check.md"
+    "bronze_complete.md"
   ]
 }
