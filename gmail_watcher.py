@@ -1,0 +1,160 @@
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from base_watcher import BaseWatcher  # assume base_watcher.py exists
+import os
+from datetime import datetime
+import json
+
+SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
+
+class GmailWatcher(BaseWatcher):
+    def __init__(self, vault_path: str, check_interval: int = 300):  # 5 min default
+        super().__init__(vault_path, check_interval)
+        self.creds = None
+        self.service = None
+        self.last_processed_time = None
+        self._authenticate()
+
+    def _authenticate(self):
+        creds_file = 'credentials.json'
+        token_file = 'token.json'
+        
+        # Check if token file exists and load credentials
+        if os.path.exists(token_file):
+            self.creds = Credentials.from_authorized_user_file(token_file, SCOPES)
+        
+        # If no valid credentials, authenticate
+        if not self.creds or not self.creds.valid:
+            if not os.path.exists(creds_file):
+                raise FileNotFoundError(f"Credentials file {creds_file} not found. Please follow setup guide.")
+                
+            flow = InstalledAppFlow.from_client_secrets_file(creds_file, SCOPES)
+            self.creds = flow.run_local_server(port=0)
+            
+            # Save credentials for next run
+            with open(token_file, 'w') as token:
+                token.write(self.creds.to_json())
+        
+        self.service = build('gmail', 'v1', credentials=self.creds)
+
+    def check_for_updates(self):
+        """Check for new important emails in Gmail"""
+        try:
+            # Define query to get unread important emails
+            query = 'is:unread is:important newer_than:1d'  # Last 1 day
+            
+            # If we have a last processed time, only get emails after that time
+            if self.last_processed_time:
+                query += f' after:{self.last_processed_time.strftime("%Y/%m/%d")}'
+            
+            # Call the Gmail API to search for messages
+            results = self.service.users().messages().list(
+                userId='me', 
+                q=query
+            ).execute()
+            
+            messages = results.get('messages', [])
+            new_emails = []
+            
+            for msg in messages[:10]:  # Limit to 10 emails to avoid too many files
+                # Get the full message
+                message = self.service.users().messages().get(
+                    userId='me', 
+                    id=msg['id']
+                ).execute()
+                
+                # Extract email details
+                headers = {header['name']: header['value'] for header in message['payload'].get('headers', [])}
+                
+                email_data = {
+                    'id': msg['id'],
+                    'subject': headers.get('Subject', 'No Subject'),
+                    'from': headers.get('From', 'Unknown Sender'),
+                    'date': headers.get('Date', ''),
+                    'snippet': message.get('snippet', ''),
+                    'timestamp': datetime.now()
+                }
+                
+                new_emails.append(email_data)
+            
+            # Update last processed time
+            self.last_processed_time = datetime.now()
+            
+            self.logger.info(f"Found {len(new_emails)} new important emails")
+            return new_emails
+            
+        except Exception as e:
+            self.logger.error(f"Error checking Gmail: {e}")
+            return []
+
+    def create_action_file(self, email_data) -> str:
+        """Create a .md file in Needs_Action folder for the new email"""
+        timestamp = email_data['timestamp'].strftime("%Y%m%d_%H%M%S")
+        
+        # Create a unique filename based on subject and timestamp
+        subject_clean = "".join(c for c in email_data['subject'] if c.isalnum() or c in (' ', '-', '_')).rstrip()
+        if len(subject_clean) > 50:
+            subject_clean = subject_clean[:50]
+        subject_clean = subject_clean.replace(' ', '_')
+        
+        action_filename = f"EMAIL_{subject_clean}_{timestamp}.md"
+        action_file_path = self.needs_action / action_filename
+
+        # Create content for the action file
+        content = f"""# Important Email Received
+
+## Email Information
+- **Subject**: {email_data['subject']}
+- **From**: {email_data['from']}
+- **Received**: {email_data['date']}
+- **Email ID**: {email_data['id']}
+
+## Email Snippet
+{email_data['snippet']}
+
+## Action Required
+This is an important email that requires your attention. Please review and take appropriate action.
+
+## Recommended Next Steps
+1. Review the full email in your Gmail inbox
+2. Determine if this requires creating a plan or taking immediate action
+3. If needed, create a Plan.md file to outline your response
+4. Move this file to Pending_Approval if human approval is needed
+
+---
+*Automatically generated by GmailWatcher at {datetime.now().isoformat()}*
+"""
+
+        # Write the content to the action file
+        with open(action_file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+
+        self.logger.info(f"Created action file: {action_file_path}")
+        return str(action_file_path)
+
+
+if __name__ == "__main__":
+    import sys
+    from pathlib import Path
+    
+    # Add the vault directory to the path so we can import the watcher modules
+    vault_path = Path(__file__).parent
+    sys.path.insert(0, str(vault_path))
+    
+    # Create and start the Gmail watcher
+    # It will check for new emails every 5 minutes
+    watcher = GmailWatcher(
+        vault_path=str(vault_path),
+        check_interval=300  # 5 minutes
+    )
+    
+    print("Starting Gmail Watcher...")
+    print(f"Monitoring Gmail for important emails every {watcher.check_interval} seconds")
+    print("Press Ctrl+C to stop the watcher.")
+    
+    try:
+        watcher.run()
+    except KeyboardInterrupt:
+        print("\nStopping Gmail Watcher...")
+        print("Watcher stopped successfully.")

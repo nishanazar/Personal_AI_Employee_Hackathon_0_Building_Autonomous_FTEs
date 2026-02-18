@@ -1,0 +1,105 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.env.example/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Node.js (for MCP server)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Credentials and Tokens (SENSITIVE!)
+credentials.json
+token.json
+*.key
+*.pem
+.secrets
+
+# Environment files
+.env.local
+.env.*.local
+
+# Log files
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Obsidian (optional - your personal notes)
+.obsidian/
+
+# Test data folders (don't push test files)
+Inbox/*
+Needs_Action/*
+Pending_Approval/*
+Approved/*
+Rejected/*
+Done/*
+Plans/*
+
+# Keep folder structure but ignore contents
+!Inbox/.gitkeep
+!Needs_Action/.gitkeep
+!Pending_Approval/.gitkeep
+!Approved/.gitkeep
+!Rejected/.gitkeep
+!Done/.gitkeep
+!Plans/.gitkeep
+
+# Temporary files
+*.tmp
+*.bak
+*.old
+
+.env
+.env.example
+credentials.json
+token.json
+*.backup
+__pycache__/
+*.pyc
+.venv/
+node_modules/
