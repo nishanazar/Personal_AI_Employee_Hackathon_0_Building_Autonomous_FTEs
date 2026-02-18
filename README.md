@@ -2,7 +2,7 @@
 
 **An intelligent file monitoring and task management system with AI-powered automation**
 
-Built for Panaversity Hackathon 0 - **Silver Tier Complete** ✅
+Built for GIAIC Hackathon 0 - **Silver Tier Complete** ✅
 
 ---
 
@@ -18,9 +18,6 @@ Built for Panaversity Hackathon 0 - **Silver Tier Complete** ✅
 - [Testing](#testing)
 - [Documentation](#documentation)
 - [Security](#security)
-- [Demo Video](#demo-video)
-- [Submission](#submission)
-- [Troubleshooting](#troubleshooting)
 - [License](#license)
 
 ---
@@ -320,98 +317,6 @@ This project includes a `.gitignore` file that automatically excludes:
 - Cache files
 - Test data
 
----
-
-## 🎥 Demo Video
-
-A 3-5 minute demo video is available showing:
-1. File System Watcher in action
-2. Gmail Watcher detecting emails
-3. Approval workflow demonstration
-4. Plan.md creation
-5. Dashboard updates
-
-**Video Link:** [Coming Soon]
-
----
-
-## 📤 Submission
-
-### Hackathon Submission
-
-**Tier:** Silver  
-**GitHub:** [Your Repository URL]  
-**Demo Video:** [Your Video URL]
-
-### Submission Checklist
-
-- [x] All Silver Tier requirements met
-- [x] All tests passing (41/41)
-- [x] Documentation complete
-- [x] Security configured
-- [x] Demo video recorded
-- [x] GitHub repository public
-
----
-
-## 🆘 Troubleshooting
-
-### Gmail Watcher Not Working
-
-**Problem:** No EMAIL files created
-
-**Solution:**
-1. Check `credentials.json` exists
-2. Run `python gmail_watcher.py` to authenticate
-3. Mark test email as **Important**
-4. Keep test email **Unread**
-5. Check internet connection
-
-### LinkedIn Watcher Not Detecting
-
-**Problem:** No LINKEDIN files created
-
-**Solution:**
-1. Check `LINKEDIN_ACCESS_TOKEN` in `.env`
-2. Verify token is valid (not expired)
-3. Check LinkedIn app permissions
-4. Note: API may have rate limits
-
-### Tests Failing
-
-**Problem:** pytest tests failing
-
-**Solution:**
-```bash
-# Run with verbose output
-pytest test_silver_tier.py -v --tb=long
-
-# Check specific error and fix
-```
-
-### Module Not Found
-
-**Problem:** `ModuleNotFoundError`
-
-**Solution:**
-```bash
-# Activate virtual environment
-.venv\Scripts\activate  # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
----
-
-## 📞 Support
-
-For issues or questions:
-1. Check `SILVER_TIER_COMPLETE_GUIDE.md`
-2. Review error messages carefully
-3. Create an issue on GitHub
-
----
 
 ## 📄 License
 
@@ -421,7 +326,7 @@ This project is open source and available under the MIT License.
 
 ## 🎉 Acknowledgments
 
-Built for **Panaversity Hackathon 0** - Silver Tier
+Built for **GIAIC Hackathon 0** - Silver Tier
 
 **Features Implemented:**
 - Multiple watchers (File System, Gmail, LinkedIn)
